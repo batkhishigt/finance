@@ -15,6 +15,22 @@ var uiController = (function () {
         },
         getDOMstrings: function () {
             return DOMstrings;
+        },
+        addListItem: function (item, type) {
+            var html, list;
+            if (type === 'inc') {
+                list = '.income__list';
+                html = ' <div class="item clearfix" id = "income-%id%" ><div class="item__description" > %DESCRIPTION%</div><div class="right clearfix"><div class="item__value">+ %VALUE%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div >';
+            } else {
+                list = '.expenses__list';
+                html = '<div class="item clearfix" id="expense-%id%"><div class="item__description"> %DESCRIPTION%</div><div class="right clearfix"><div class="item__value">- %VALUE%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div >';
+            }
+            html = html.replace('%id%', item.id);
+            html = html.replace('%DESCRIPTION%', item.description);
+            html = html.replace('%VALUE%', item.value);
+
+            document.querySelector(list).insertAdjacentHTML('beforeend', html)
+
         }
     }
 })();
@@ -56,6 +72,7 @@ var financeController = (function () {
                 item = new Expense(id, desc, val)
             }
             data.items[type].push(item);
+            return item;
         },
         data: function () {
             return data;
@@ -68,8 +85,8 @@ var financeController = (function () {
 var appController = (function (uiController, fnController) {
     var ctrlAddItem = function () {
         var input = uiController.getInput();
-        fnController.addItem(input.type, input.descriotion, input.value)
-        console.log(fnController.data())
+        var item = fnController.addItem(input.type, input.descriotion, input.value)
+        uiController.addListItem(item, input.type);
     }
     var setupEventListener = function () {
         var DOM = uiController.getDOMstrings();
